@@ -8,6 +8,7 @@ package javaconexion;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
 
 
 /**
@@ -21,8 +22,51 @@ public class FormularioClientes extends javax.swing.JFrame {
      */
     public FormularioClientes() {
         initComponents();
+        this.setLocationRelativeTo(this);
+    }
+    
+    void mostrardatos(String valor){
+        DefaultTableModel modelo = new DefaultTableModel();
+        
+        modelo.addColumn("cedula");
+        modelo.addColumn("nombre");
+        modelo.addColumn("direccion");
+        modelo.addColumn("telefono");
+        
+        tabla_clientes.setModel(modelo);
+        
+        String sql=""; 
+        
+        if(valor.equals("")){
+             JOptionPane.showConfirmDialog(null,"No se han digitados datos, se imprimira toda la tabla");
+             sql = "SELECT * FROM clientes";
+
+        }else{
+             sql = "SELECT * FROM clientes WHERE cedula='"+valor+"'";
+        }
+
+        
+        String [] datos = new String[4];
+        try{
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            while (rs.next()) {
+                datos[0]=rs.getString(1);
+                datos[1]=rs.getString(2);
+                datos[2]=rs.getString(3);
+                datos[3]=rs.getString(4);
+                
+                modelo.addRow(datos);
+            } 
+            
+            tabla_clientes.setModel(modelo);
+            }catch (SQLException ex){
+                    
+        }
     }
 
+        
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,6 +77,8 @@ public class FormularioClientes extends javax.swing.JFrame {
     private void initComponents() {
 
         jTextField2 = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         caja_nombre = new javax.swing.JTextField();
         caja_direccion = new javax.swing.JTextField();
@@ -48,11 +94,27 @@ public class FormularioClientes extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         caja_buscar = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tabla_clientes = new javax.swing.JTable();
 
         jTextField2.setText("jTextField2");
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jPanel1.add(caja_nombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(105, 103, 129, -1));
         jPanel1.add(caja_direccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(105, 137, 129, -1));
@@ -68,9 +130,9 @@ public class FormularioClientes extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 51, 255));
         jLabel1.setText("REGISTRO DE CLIENTES");
         jLabel1.setToolTipText("");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(143, 23, -1, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 30, -1, -1));
 
-        btn_guardar.setBackground(new java.awt.Color(0, 51, 153));
+        btn_guardar.setBackground(new java.awt.Color(204, 204, 204));
         btn_guardar.setText("GUARDAR");
         btn_guardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -79,15 +141,31 @@ public class FormularioClientes extends javax.swing.JFrame {
         });
         jPanel1.add(btn_guardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 90, -1, -1));
 
-        btn_listar.setBackground(new java.awt.Color(0, 51, 204));
+        btn_listar.setBackground(new java.awt.Color(255, 255, 153));
         btn_listar.setText("LISTAR");
+        btn_listar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_listarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btn_listar, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 120, 80, -1));
 
+        btn_buscar.setBackground(new java.awt.Color(102, 153, 255));
         btn_buscar.setText("BUSCAR");
+        btn_buscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buscarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btn_buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 240, 80, -1));
 
-        btn_eliminar.setBackground(new java.awt.Color(0, 51, 153));
+        btn_eliminar.setBackground(new java.awt.Color(204, 153, 255));
         btn_eliminar.setText("ELIMINAR");
+        btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarActionPerformed(evt);
+            }
+        });
         jPanel1.add(btn_eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 150, -1, -1));
         jPanel1.add(caja_cedula, new org.netbeans.lib.awtextra.AbsoluteConstraints(103, 69, 131, -1));
 
@@ -104,15 +182,30 @@ public class FormularioClientes extends javax.swing.JFrame {
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 169, -1, -1));
         jPanel1.add(caja_buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 200, -1));
 
+        tabla_clientes.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {},
+                {},
+                {},
+                {}
+            },
+            new String [] {
+
+            }
+        ));
+        jScrollPane2.setViewportView(tabla_clientes);
+
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 310, 374, 402));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 737, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -137,6 +230,32 @@ public class FormularioClientes extends javax.swing.JFrame {
     private void caja_telefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_caja_telefonoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_caja_telefonoActionPerformed
+
+    private void btn_listarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_listarActionPerformed
+        mostrardatos("");
+    }//GEN-LAST:event_btn_listarActionPerformed
+
+    private void btn_buscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarActionPerformed
+        mostrardatos(caja_buscar.getText());
+    }//GEN-LAST:event_btn_buscarActionPerformed
+
+    private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
+                
+        String str="DELETE FROM clientes WHERE cedula='"+caja_buscar.getText()+"'";
+        
+        try{
+            PreparedStatement pst = cn.prepareStatement(str);
+            pst=cn.prepareStatement(str);
+            pst.executeUpdate();
+        
+        }catch(Exception e){
+            
+        }
+        JOptionPane.showMessageDialog(null,"Datos borrados exitosamente");
+        mostrardatos("");
+
+        
+    }//GEN-LAST:event_btn_eliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -190,7 +309,11 @@ public class FormularioClientes extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTable tabla_clientes;
     // End of variables declaration//GEN-END:variables
         Conectar cc=new Conectar();
         Connection cn=cc.conexion();
